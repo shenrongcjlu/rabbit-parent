@@ -12,6 +12,10 @@ import java.util.List;
  */
 public interface RabbitBroker {
 
+    /**
+     * 快速消息
+     * @param message
+     */
     void rapidSend(Message message);
 
     void confirmSend(Message message);

@@ -28,6 +28,7 @@ public class ProducerClient implements MessageProducer {
         String messageType = message.getMessageType();
         switch (messageType) {
             case MessageType.RAPID:
+                rabbitBroker.rapidSend(message);
                 break;
             case MessageType.CONFIRM:
                 break;

@@ -21,7 +21,7 @@ import java.util.List;
 public class RabbitBrokerImpl implements RabbitBroker {
 
     @Resource
-    private RabbitTemplate rabbitTemplate;
+    private RabbitTemplateContainer rabbitTemplateContainer;
 
     @Override
     public void rapidSend(Message message) {
@@ -54,7 +54,8 @@ public class RabbitBrokerImpl implements RabbitBroker {
             String topic = message.getTopic();
             CorrelationData correlationData = new CorrelationData(String.format("%s#%s", message.getMessageId(), System.currentTimeMillis()));
 
-            rabbitTemplate.convertAndSend("exchange", routingKey, message, correlationData);
+            RabbitTemplate template = rabbitTemplateContainer.getTemplate(message);
+            template.convertAndSend("exchange", routingKey, message, correlationData);
 
             log.info("#RabbitBrokerImpl.sendKernel# send to rabbitmq, messageId: {}", message.getMessageId());
         });
