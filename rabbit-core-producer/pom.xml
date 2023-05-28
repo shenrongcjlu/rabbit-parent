@@ -16,10 +16,7 @@
             <groupId>com.base.rabbit</groupId>
             <artifactId>rabbit-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.base.rabbit</groupId>
-            <artifactId>rabbit-api</artifactId>
-        </dependency>
+
     </dependencies>
 
 </project>

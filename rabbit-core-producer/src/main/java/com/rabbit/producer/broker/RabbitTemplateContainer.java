@@ -5,6 +5,12 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.rabbit.api.Message;
 import com.rabbit.api.MessageType;
+import com.rabbit.common.convert.GenericMessageConverter;
+import com.rabbit.common.convert.RabbitMessageConverter;
+import com.rabbit.common.serializer.Serializer;
+import com.rabbit.common.serializer.SerializerFactory;
+import com.rabbit.common.serializer.impl.JacksonSerializer;
+import com.rabbit.common.serializer.impl.JacksonSerializerFactory;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +37,8 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
 
     private Splitter splitter = Splitter.on("#");
 
+    private SerializerFactory serializerFactory = JacksonSerializerFactory.INSTANCE;
+
     @Resource
     private ConnectionFactory connectionFactory;
 
@@ -48,7 +56,12 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         rabbitTemplate.setExchange(topic);
         rabbitTemplate.setRetryTemplate(new RetryTemplate());
         rabbitTemplate.setRoutingKey(message.getRoutingKey());
-//        rabbitTemplate.setMessageConverter();
+
+        // 设置序列化方式
+        Serializer serializer = serializerFactory.create();
+        GenericMessageConverter genericMessageConverter = new GenericMessageConverter(serializer);
+        RabbitMessageConverter rabbitMessageConverter = new RabbitMessageConverter(genericMessageConverter);
+        rabbitTemplate.setMessageConverter(rabbitMessageConverter);
 
         // 只要不是异步消息，就注册回调
         String messageType = message.getMessageType();
