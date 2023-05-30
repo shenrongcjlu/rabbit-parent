@@ -20,7 +20,7 @@ public interface RabbitBroker {
 
     void confirmSend(Message message);
 
-    void reliantSent(Message message);
+    void reliantSend(Message message);
 
     void sendMessages(List<Message> messages);
 

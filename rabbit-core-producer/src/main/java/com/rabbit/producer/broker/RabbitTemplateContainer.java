@@ -11,6 +11,7 @@ import com.rabbit.common.serializer.Serializer;
 import com.rabbit.common.serializer.SerializerFactory;
 import com.rabbit.common.serializer.impl.JacksonSerializer;
 import com.rabbit.common.serializer.impl.JacksonSerializerFactory;
+import com.rabbit.producer.service.MessageStoreService;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,8 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
 
     @Resource
     private ConnectionFactory connectionFactory;
+    @Resource
+    private MessageStoreService messageStoreService;
 
     public RabbitTemplate getTemplate(Message message) {
         Preconditions.checkNotNull(message);
@@ -79,8 +82,10 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         long sendTime = Long.parseLong(strings.get(1));
 
         if (ack) {
+            messageStoreService.success(messageId);
             log.info("send message is ok, messageId: {}, time: {}", messageId, sendTime);
         } else {
+            messageStoreService.failure(messageId);
             log.info("send message is failed, messageId: {}, time: {}", messageId, sendTime);
         }
     }
