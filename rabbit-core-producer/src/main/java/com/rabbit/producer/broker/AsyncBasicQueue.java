@@ -18,7 +18,7 @@ public class AsyncBasicQueue {
 
     private static final int QUEUE_SIZE = 10000;
 
-    private static ExecutorService senderAsync =
+    private static final ExecutorService senderAsync =
             new ThreadPoolExecutor(
                     THREAD_SIZE,
                     THREAD_SIZE,
